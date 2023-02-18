@@ -4,8 +4,6 @@ use sdl2::Sdl;
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 
-pub mod engine;
-
 pub struct Engine {
     context: Sdl,
     window: Window,
