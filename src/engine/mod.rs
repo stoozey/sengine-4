@@ -6,16 +6,15 @@ use sdl2::event::Event;
 
 pub struct Engine {
     context: Sdl,
-    window: Window,
     canvas: WindowCanvas,
     loop_running: bool,
 }
 
 impl Engine {
-    pub fn create() -> Result<Engine, String> {
+    pub fn create(window_width: u32, window_height: u32) -> Result<Engine, String> {
         let context = sdl2::init()?;
-        let video_subsystem = context.video()?;
-        let window = video_subsystem.window("Penis!", 1280, 720)
+        let video = context.video()?;
+        let window = video.window("Penis!", window_width, window_height)
             .position_centered()
             .build()
             .unwrap();
@@ -24,18 +23,18 @@ impl Engine {
             .build()
             .unwrap();
 
-        Ok(Engine { context, window, canvas, loop_running: false })
+        Ok(Engine{ context, canvas, loop_running: false })
     }
 
     pub fn run_loop(&mut self) {
-        loop_running = true;
+        self.loop_running = true;
 
-        let mut event_queue = context.event_pump().unwrap();
-        while loopRunning {
+        let mut event_queue = self.context.event_pump().unwrap();
+        while self.loop_running {
             for event in event_queue.poll_iter() {
                 match event {
                     Event::Quit {..} => {
-                        loop_running = false;
+                        self.loop_running = false;
                     },
 
                     _=> { }
@@ -44,12 +43,12 @@ impl Engine {
 
             // TODO add update loop
 
-            canvas.set_draw_color(Color::RGB(255, 255, 255));
-            canvas.clear();
+            self.canvas.set_draw_color(Color::RGB(255, 255, 255));
+            self.canvas.clear();
 
             // TODO add render loop
 
-            canvas.present();
+            self.canvas.present();
         }
     }
 }
