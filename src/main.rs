@@ -18,13 +18,13 @@ fn main() -> Result<(), String> {
     let mut running = true;
     let mut event_queue = context.event_pump().unwrap();
 
-    let mut x = 0;
+    let mut x = 0.0;
     while running {
         for event in event_queue.poll_iter() {
             match event {
                 Event::Quit {..} => {
                     running = false;
-                }
+                },
 
                 _=> { }
             }
@@ -33,8 +33,8 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.clear();
 
-        let rect = Rect::new(x, 0, 64, 64);
-        x += 1;
+        let rect = Rect::new(x as i32, 0, 64, 64);
+        x += 0.05;
 
         canvas.set_draw_color(Color::RGB(255, 0, 0));
         canvas.fill_rect(rect)?;
