@@ -16,8 +16,8 @@ struct PenisMan {
 
 impl Entity for PenisMan {
     fn update(&mut self, delta_time: i64) -> Result<(), String> {
-        self.x += 0.01;
-        self.y += 0.01;
+        self.x += 0.01 * delta_time as f32;
+        self.y += 0.01 * delta_time as f32;
         Ok(())
     }
 
@@ -30,7 +30,7 @@ impl Entity for PenisMan {
 }
 
 fn main() -> Result<(), String> {
-    let mut engine = engine::Engine::new(1280, 720)?;
+    let mut engine = Engine::new(1280, 720)?;
     let mut penis_man = PenisMan{ x: 0.0, y: 0.0 };
     engine.add_entity(&mut penis_man);
 
