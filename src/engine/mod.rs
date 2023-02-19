@@ -18,7 +18,7 @@ pub struct Engine<'a> {
 
     context: Option<Sdl>,
     canvas: Option<WindowCanvas>,
-    entities: Option<Vec<&'a dyn Entity>>,
+    entities: Option<Vec<&'a mut dyn Entity>>,
 }
 
 impl <'a>Default for Engine<'a> {
@@ -46,7 +46,7 @@ impl <'a>Engine<'a> {
             .build()
             .unwrap();
 
-        let entities = Vec::<&dyn Entity>::new();
+        let entities = Vec::<&mut dyn Entity>::new();
 
         let engine = Engine {
             context: Option::from(context),
