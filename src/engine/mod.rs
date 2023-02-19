@@ -1,17 +1,40 @@
+pub mod loop_runner;
+pub mod entity;
+
+use std::default;
 use sdl2::video::Window;
 use sdl2::render::WindowCanvas;
 use sdl2::Sdl;
 use sdl2::pixels::Color;
 use sdl2::event::Event;
+use sdl2::keyboard::Keycode::O;
 
-pub struct Engine {
-    context: Sdl,
-    canvas: WindowCanvas,
+use entity::Entity;
+
+static CLEAR_COLOUR: Color = Color::WHITE;
+
+pub struct Engine<'a> {
     loop_running: bool,
+
+    context: Option<Sdl>,
+    canvas: Option<WindowCanvas>,
+    entities: Option<Vec<&'a dyn Entity>>,
 }
 
-impl Engine {
-    pub fn create(window_width: u32, window_height: u32) -> Result<Engine, String> {
+impl <'a>Default for Engine<'a> {
+    fn default() -> Engine<'a> {
+        Engine {
+            loop_running: false,
+
+            context: None,
+            canvas: None,
+            entities: None,
+        }
+    }
+}
+
+impl <'a>Engine<'a> {
+    pub fn new(window_width: u32, window_height: u32) -> Result<Engine<'a>, String> {
         let context = sdl2::init()?;
         let video = context.video()?;
         let window = video.window("Penis!", window_width, window_height)
@@ -23,13 +46,30 @@ impl Engine {
             .build()
             .unwrap();
 
-        Ok(Engine{ context, canvas, loop_running: false })
+        let entities = Vec::<&dyn Entity>::new();
+
+        let engine = Engine {
+            context: Option::from(context),
+            canvas: Option::from(canvas),
+            entities: Option::from(entities),
+
+            ..Engine::default()
+        };
+
+        Ok(engine)
+    }
+
+    pub fn add_entity<T: Entity + 'a>(&mut self, entity: &'a mut T) {
+        let _ = self.entities.as_mut().unwrap().push(entity);
     }
 
     pub fn run_loop(&mut self) {
         self.loop_running = true;
 
-        let mut event_queue = self.context.event_pump().unwrap();
+        let context = self.context.as_ref().unwrap();
+        let canvas = self.canvas.as_mut().unwrap();
+
+        let mut event_queue = context.event_pump().unwrap();
         while self.loop_running {
             for event in event_queue.poll_iter() {
                 match event {
@@ -37,18 +77,22 @@ impl Engine {
                         self.loop_running = false;
                     },
 
-                    _=> { }
+                    _=> {}
                 }
             }
 
-            // TODO add update loop
+            for entity in self.entities.as_mut().unwrap() {
+                entity.update(1).expect("entity update error");
+            }
 
-            self.canvas.set_draw_color(Color::RGB(255, 255, 255));
-            self.canvas.clear();
+            canvas.set_draw_color(CLEAR_COLOUR);
+            canvas.clear();
 
-            // TODO add render loop
+            for entity in self.entities.as_mut().unwrap() {
+                entity.render(canvas).expect("entity render error");
+            }
 
-            self.canvas.present();
+            canvas.present();
         }
     }
 }
