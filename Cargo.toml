@@ -3,5 +3,6 @@ name = "sengine-4"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-sdl2="0.35.2"
+[dependencies.sdl2]
+features = ["use_mac_framework"]
+version = "0.35.2"
