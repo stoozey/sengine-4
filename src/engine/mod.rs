@@ -1,13 +1,10 @@
-pub mod loop_runner;
 pub mod entity;
+pub mod loop_runner;
 
-use std::default;
-use sdl2::video::Window;
+use sdl2::event::Event;
+use sdl2::pixels::Color;
 use sdl2::render::WindowCanvas;
 use sdl2::Sdl;
-use sdl2::pixels::Color;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode::O;
 
 use entity::Entity;
 
@@ -21,7 +18,7 @@ pub struct Engine<'a> {
     entities: Option<Vec<&'a mut dyn Entity>>,
 }
 
-impl <'a>Default for Engine<'a> {
+impl<'a> Default for Engine<'a> {
     fn default() -> Engine<'a> {
         Engine {
             loop_running: false,
@@ -33,18 +30,17 @@ impl <'a>Default for Engine<'a> {
     }
 }
 
-impl <'a>Engine<'a> {
+impl<'a> Engine<'a> {
     pub fn new(window_width: u32, window_height: u32) -> Result<Engine<'a>, String> {
         let context = sdl2::init()?;
         let video = context.video()?;
-        let window = video.window("Penis!", window_width, window_height)
+        let window = video
+            .window("Penis!", window_width, window_height)
             .position_centered()
             .build()
             .unwrap();
 
-        let canvas = window.into_canvas()
-            .build()
-            .unwrap();
+        let canvas = window.into_canvas().build().unwrap();
 
         let entities = Vec::<&mut dyn Entity>::new();
 
@@ -73,11 +69,11 @@ impl <'a>Engine<'a> {
         while self.loop_running {
             for event in event_queue.poll_iter() {
                 match event {
-                    Event::Quit {..} => {
+                    Event::Quit { .. } => {
                         self.loop_running = false;
-                    },
+                    }
 
-                    _=> {}
+                    _ => {}
                 }
             }
 
@@ -88,6 +84,7 @@ impl <'a>Engine<'a> {
             canvas.set_draw_color(CLEAR_COLOUR);
             canvas.clear();
 
+            // TODO add camera/view system and make render calls go into it
             for entity in self.entities.as_mut().unwrap() {
                 entity.render(canvas).expect("entity render error");
             }

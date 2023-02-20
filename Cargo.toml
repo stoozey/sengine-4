@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies.sdl2]
 features = ["use_mac_framework"]
 version = "0.35.2"
+
+[dependencies]
+gl = "0.14.0"
